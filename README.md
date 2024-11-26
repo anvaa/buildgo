@@ -1,6 +1,6 @@
-GO build script
+<h2>GO build script</h2>
 <br>
-./buildgo.sh appname path/to/aource validtodate<br>
+buildgo.sh appname path/to/aource validtodate<br>
 <br>
 Example: ./buildgo.sh myapp . 251231<br>
 Output: Building myapp.arm64 for linux, v241126, validto: 2048108400<br>
