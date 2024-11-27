@@ -41,12 +41,24 @@ version=$(date +%y%m%d)
 # if validto is emty or is 0, set it to 10 years from now
 if [ -z $validto ]; then
     # add 10 year to the current date
-    validto=$(date -d "+10 years" +%y%m%d)
-    echo "Add 10 years:" $validto
+    valdate=$(date -d "+10 years" +%y%m%d)
+    echo "Add 10 years:" $valdate
 fi
-    
-# convert validto YYMMDD to unix timestamp
+
+# is valid date YYMMDD?
+if [[ ! $validto =~ ^[0-9]{6}$ ]]; then
+    echo "Invalid validto date format. Use YYMMDD"
+    exit 1
+fi
+
+# convert YYMMDD to unix timestamp
+valdate=$validto
 validto=$(date -d $validto +%s)
+# if error, exit
+if [ $? -ne 0 ]; then
+    echo "Invalid date or date format. Use YYMMDD"
+    exit 1
+fi
 
 # get cur path
 curpath=$(pwd)
@@ -55,12 +67,11 @@ curpath=$(pwd)
 cd $path
 
 # Build the go app
-echo "Building $buildname for $os, v$version, validto: $validto"
+echo "Building $buildname for $os, v$version, validto: $valdate"
 go build -o $buildname -ldflags="-s -w -X 'appconf.Version=$version' -X 'appconf.Validto=$validto'"
 
 # check if the build was successful
 if [ $? -eq 0 ]; then
-    echo "Build successful"
     # check if the file exists
     if [ -f $buildname ]; then
         # show size of the file
